@@ -24,12 +24,12 @@ HostApplication=
 UseCustomMakefile=0
 CustomMakefile=
 CommandLine=
-Folders=BinNode,List,Stack,test,Vector
+Folders=BinNode,BinTree,List,Stack,test,Vector
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=0000000000000000000000000
-UnitCount=11
+UnitCount=13
 
 [VersionInfo]
 Major=1
@@ -131,13 +131,14 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit10]
-FileName=Î´ÃüÃû2
-Folder=Stack
+FileName=BinNode.h
+Folder=BinNode
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
+CompileCpp=1
 
 [Unit3]
 FileName=List.h
@@ -150,9 +151,29 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit11]
-FileName=BinNode.h
+FileName=BinNode.cpp
 CompileCpp=1
 Folder=BinNode
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit12]
+FileName=BinTree.h
+CompileCpp=1
+Folder=BinTree
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit13]
+FileName=BinTree.cpp
+CompileCpp=1
+Folder=BinTree
 Compile=1
 Link=1
 Priority=1000
