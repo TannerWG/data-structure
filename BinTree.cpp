@@ -56,5 +56,160 @@ BinTree<T>* BinTree<T>::secede(BinNodePosi(T) x){ //assert: xÎª¶ş²æÊ÷ÖĞµÄºÏ·¨Î»Ö
 	S->_size = x->size(); _size -= S->_size; return S; //¸üĞÂ¹æÄ££¬·µ»Ø·ÖÀë³öÀ´µÄ×ÓÊ÷ 
 } 
 
+//ÏÈĞò±éÀú£¨µİ¹é°æ£© 
+template <typename T, typename VST> //ÔªËØÀàĞÍ£¬²Ù×÷Æ÷
+void travPre_R(BinNodePosi(T) x, VST& visit){ //¶ş²æÊ÷ÏÈĞò±éÀúËã·¨£¨µİ¹é°æ£© 
+	if(!x) return;
+	visit(x->data);
+	travPre_R(x->lc);
+	travPre_R(x->rc);
+} 
+
+//ºóĞò±éÀú£¨µİ¹é°æ£© 
+template <typename T, typename VST> //ÔªËØÀàĞÍ£¬²Ù×÷Æ÷
+void travPost_R(BinNodePosi(T) x, VST& visit){ //¶ş²æÊ÷ºóĞò±éÀúËã·¨£¨µİ¹é°æ£© 
+	if(!x) return;
+	travPost_R(x->lc, visit);
+	travPost_R(x->rc, visit);
+	visit(x->data);
+} 
+
+//ÖĞĞò±éÀú£¨µİ¹é°æ£©
+template <typename T, typename VST> //ÔªËØÀàĞÍ¡¢²Ù×÷Æ÷
+void travIn_P(BinNodePosi(T) x, VST& visit){ //¶ş²æÊ÷ÖĞĞò±éÀúËã·¨£¨µİ¹é°æ£© 
+	if(!x) return;
+	travIn_R(x->lc, visit);
+	visit(x->data);
+	travIn_R(x->rc, visit);
+} 
+
+//´Óµ±Ç°½Úµã³ö·¢£¬ÑØ×óÓÒ·ÖÖ§²»¶ÏÉîÈë£¬Ö±ÖÁÃ»ÓĞ×óÓÒ·ÖÖ§µÄ½Úµã£»ÑØÍ¾½ÚµãÓöµ½ºóÁ¢¼´·ÃÎÊ 
+template <typename T, typename VST> //ÔªËØÀàĞÍ£¬²Ù×÷Æ÷
+static void visitAlongLeftBranch(BinNodePosi(T) x, VST& visit, Stack<BinNodePosi(T)>& S){
+	while(x){
+		visit(x->data); //·ÃÎÊµ±Ç°º¢×Ó½Úµã
+		S.push(x->rc); //ÓÒº¢×ÓÈëÕ»Ôİ´æ£¨¿ÉÓÅ»¯£ºÍ¨¹ıÅĞ¶Ï£¬±ÜÃâ¿ÕµÄÓÒº¢×ÓÈëÕ»£©
+		x = x->rc; //ÑØ×ó·ÖÖ§ÉîÈëÒ»²ã 
+	}
+} 
+
+template<typename T, typename VST> //ÔªËØÀàĞÍ¡¢²Ù×÷Æ÷
+void travPre_I2(BinNodePosi(T) x, VST& visit){ //¶ş²æÊ÷ÏÈĞò±éÀúËã·¨£¨µü´ú°æ#2£© 
+	Stack<BinNodePosi(T)> S; //¸¨ÖúÕ» 
+	while(true){
+		visitAlongLeftBranch(x, visit, S); //´Óµ±Ç°½Úµã³ö·¢£¬ÖğÅú·ÃÎÊ
+		if(S.empty()) break; //Ö±µ½Õ»¿Õ
+		x = S.pop(); //µ¯³öÏÂÒ»ÅúµÄÆğµã 
+	}
+} 
+
+template <typename T> //´Óµ±Ç°½Úµã³ö·¢£¬ÑÛ×ó·ÖÖ§²»¶ÏÉîÈë£¬Ö±ÖÁÃ»ÓĞ×ó·ÖÖ§µÄ½Úµã
+static void goAlongLeftBranch(BinNodePosi(T) x, Stack<BinNodePosi(T)>& S){
+	while(x){S.push(x); x=x->lc;} //µ±Ç°½ÚµãÈëÕ»ºóËæ»úÏò×ó²à·ÖÖ§ÉîÈë£¬µü´úÖ±µ½ÎŞ×óº¢×Ó 
+} 
+
+template <typename T, typename VST> //ÔªËØÀàĞÍ£¬²Ù×÷Æ÷
+void travIn_I1(BinNodePosi(T) x, VST& visit){ //¶ş²æÊ÷ÖĞĞò±éÀúËã·¨£¨µü´ú°æ#1) 
+	Stack<BinNodePosi(T)> S; //¸³ÖµÕ»  
+	while(true){
+		goAlongLeftBranch(x, S); //´Óµ±Ç°½Úµã³ö·¢£¬ÖğÅúÈëÕ»
+		if(S.empty()) break; //Ö±µ½ËùÓĞ½Úµã´¦ÀíÍê±Ï
+		x = S.pop(); visit(x->data); //µ¯³öÕ»¶¥½Úµã²¢·ÃÎÊÖ®
+		x = x->rc; //×ªÏòÓÒ×ÓÊ÷ 
+	}
+} 
+
+//¶ş²æÊ÷½ÚµãÖ±½Óºó¼Ì¶¨Î»
+template <typename T> BinNodePosi(T) BinNode<T>::succ(){ //¶¨Î»½ÚµãvµÄÖ±½Óºó¼Ì 
+	BinNodePosi(T) s = this; //¼ÇÂ¼ºó¼ÌµÄÁÙÊ±±äÁ¿
+	if(rc){ //ÈôÓĞÓÒº¢×Ó£¬ÔòÖ±½Óºó¼Ì±ØÔÚÓÒ×ÓÊ÷ÖĞ£¬¾ßÌåµØ¾ÍÊÇ 
+		s = rc; //ÓÒ×ÓÊ÷ÖĞ 
+		while(HasLChild(*s)) s = s->lc; //×î¿¿×ó£¨×îĞ¡£©µØ½Úµã 
+	} else{ //·ñÔò£¬Ö±½Óºó¼ÌÓ¦ÊÇ¡°½«µ±Ç°½Úµã°üº¬ÓÚÆä×ó×ÓÊ÷ÖĞµÄ×îµÍ×æÏÈ¡±£¬¾ßÌåµØ¾ÍÊÇ 
+		while(IsRChild(*s)) s = s->parent; //ÄæÏòµØÑØÓÒÏò·ÖÖ§£¬²»¶Ï³¯×óÉÏ·½ÒÆ¶¯
+		s = s->parent; //×îºóÔÙ³¯ÓÒÉÏ·½ÒÆ¶¯Ò»²½£¬¼´µÖ´ïÖ±½Óºó¼Ì£¨Èç¹û´æÔÚ£© 
+	}
+	return s; 
+} 
+
+//¶ş²æÊ÷ÖĞĞò±éÀúËã·¨£¨µü´ú°æ#2) 
+template<typename T, typename VST> //ÔªËØÀàĞÍ£¬²Ù×İÆ÷
+void travIn_I2(BinNodePosi(T), VST& visit){ //¶ş²æÊ÷ÖĞĞò±éÀúËã·¨£¨µü´ú°æ#2) 
+	Stack<BinNodePosi(T)> S; //¸³ÖµÕ» 
+	while(true){
+		if(x){
+			S.push(x); //¸ù½Úµã½øÕ»
+			x = x->lc; //ÉîÈë±éÀú×ó×ÓÊ÷ 
+		}else if{
+			x = S.pop(); //ÉĞÎ´·ÃÎÊµÄ×îµÍ×æÏÈ½ÚµãÍËÕ»
+			visit(x->data); //·ÃÎÊ×æÏÈ½Úµã
+			x = x->rc; //±éÀú×æÏÈµÄÓÒ×ÓÊ÷ 
+		}else break; //±éÀúÍê±Ï 
+	}
+}  
+
+//¶ş²æÊ÷ÖĞĞò±éÀú·¨£¨µü´ú°æ±¾#3£¬ÎŞĞè¸¨ÖúÕ»£© 
+template<typename T, typename VST> //ÔªËØÀàĞÍ£¬²Ù×÷Æ÷
+void travIn_I3(BinNodePosi(T) x, VST& visit){ //¶ş²æÊ÷ÖĞĞò±éÀú·¨£¨µü´ú°æ±¾#3£¬ÎŞĞè¸¨ÖúÕ»£© 
+	bool backtrack = false; //Ç°Ò»²½ÊÇ·ñ¸Õ´ÓÓÒ×ÓÊ÷»ØËİ¡ª¡ªÊ¡È¥Õ»£¬½öo(1)¸¨Öú¿Õ¼ä
+	while(true){
+		if(!backtrack && HasLChild(*x)) //ÈôÓĞ×ó×ÓÊ÷ÇÒ²»ÊÇ¸Õ¸Õ»ØËİ£¬Ôò
+			x = x->lc; //ÉîÈë±éÀú×ó×ÓÊ÷
+		else{ //·ñÔò¡ª¡ªÎŞ×ó×ÓÊ÷»ò¸Õ¸Õ»ØËİ£¨Ïàµ±ÓÚÎŞ×ó×ÓÊ÷£© 
+			visit(x->data); //·ÃÎÊ¸Ã½Úµã
+			if(HasRChild(*x)){ //ÈôÓÒ×ÓÊ÷Îª·Ç¿Õ£¬Ôò 
+				x = x->rc; //ÉîÈëÓÒ×ÓÊ÷¼ÌĞø±éÀú 
+				backtrack = false; //²¢¹Ø±Õ»ØËİ±êÖ¾ 
+			}else{ //ÈôÓÒ×ÓÊ÷¿Õ£¬Ôò 
+				if(!(x = x->succ())) break; //»ØËİ£¨º¬µÖ´ïÄ©½ÚµãÊ±µÄÍË³ö·µ»Ø£©
+				backtrack = true; //²¢ÉèÖÃ»ØËİ±êÖ¾ 
+			}
+		} 
+	} 
+} 
+
+template<typename T> //ÔÚÒÔSÕ»¶¥½ÚµãÎª¸ùµÄ×ÓÊ÷ÖĞ£¬ÕÒµ½×î¸ß×ó²à¿É¼ûÒ¶½Úµã
+static void gotoHLVFL(Stack<BinNodePosi(T)>& S){ //ÑØÍ¾ËùÓö½ÚµãÒÀ´ÎÈëÕ» 
+	while(BinNodePosi(T) x = S.top()) //×Ô¶¥¶øÏÂ£¬·´¸´¼ì²éµ±Ç°½Úµã£¨¼´Õ»¶¥£©
+		if(HasLChild(*x)){ //¾¡¿ÉÄÜµØÏò×ó 
+			if(HasRChild(*x)) S.push(x->rc); //ÈôÓĞÓÒº¢×Ó£¬ÓÅÏÈÈëÕ»
+			S.push(x->lc); //È»ºó×ªÖÁ×óº¢×Ó 
+		}else //Êµ²»µÃÒÑ 
+			S.push(x->rc); //²ÅÏòÓÒ 
+	S.pop(); //·µ»ØÖ®Ç°£¬µ¯³öÕ»¶¥µØ¿Õ½Úµã 
+} 
+
+//²æÊ÷µÄºóĞø±éÀú£¨µü´ú°æ£©
+template<typename T, typename VST>
+void travPost_I(BinNodePosi(T) x, VST& visit){ //¶ş²æÊ÷µÄºóĞø±éÀú£¨µü´ú°æ£© 
+	Stack<BinNodePosi(T)> S; //¸¨ÖúÕ»
+	if(x) S.push(x); //¸ù½ÚµãÈëÕ» 
+	while(!S.empty()){
+		if(S.top() != x->parent) //ÈôÕ»¶¥·Çµ±Ç°½ÚµãÖ®¸¸£¨Ôò±ØÎªÆäÓÒĞÖµÜ£©£¬´ËÊ±Ğè
+			gotoHLVFL(S); //ÔÚÒÔÆäÓÒĞÖÎª¸ùÖ®×ÓÊ÷ÖĞ£¬ÕÒµ½HLVFL£¨Ïàµ±ÓÚµİ¹éÉîÈëÆäÖĞ£© 
+		x = S.top(); visit(x->data); //µ¯³öÕ»¶¥£¨¼´Ç°Ò»½ÚµãÖ®ºó¼Ì£©£¬²¢·ÃÎÊÖ® 
+	}
+} 
+
+//¶ş²æÊ÷²ã´Î±éÀúËã·¨
+template <typename T> template <typename VST> //ÔªËØÀàĞÍ£¬²Ù×÷Æ÷
+void BinNode<T>::travLevel(VST& visit){ //¶ş²æÊ÷²ã´Î±éÀúËã·¨ 
+	Queue<BinNodePosi(T)> Q; //¸¨Öú¶ÓÁĞ
+	Q.enqueue(this); //¸ù½ÚµãÈë¶Ó
+	while(!Q.empty()){ //ÔÚ¶ÓÁĞÔÙ´Î±ä¿ÕÖ®Ç°£¬·´¸´µü´ú 
+		BinNodePosi(T) x = Q.dequeue(); visit(x->data); //È¡³ö¶ÓÊ×½Úµã²¢·ÃÎÊÖ®
+		if(HasLChild(*x)) Q.enqueue(x->lc); //×óº¢×ÓÈë¶Ó
+		if(HasRChild(*x)) Q.enqueue(x->rc); //ÓÒº¢×ÓÈë¶Ó 
+	} 
+} 
+
+
+
+
+
+
+
+
+
 
  

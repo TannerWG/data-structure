@@ -1,7 +1,4 @@
 #include "BinNode.h"
-#define BinNodePosi(T) BinNode<T>* //节点位置
-#define stature(p) ((p)?(p)->height : -1) //节点高度
-#define enum{RB_RED, RB_BLACK} RBColor; //节点颜色
 
 //二叉树模板类BinTree 
 template <typename T> class BinTree{ //二叉树模板类
